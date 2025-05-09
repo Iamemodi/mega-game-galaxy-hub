@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
-import { GameControls } from "../components/GameControls";
-import { saveScore } from "../utils/gameUtils";
+import { GameControls } from "../../components/GameControls";
+import { saveScore } from "../../utils/gameUtils";
 
 type Card = {
   id: number;

@@ -74,6 +74,11 @@ export default {
 					idle: '#F2FCE2',        // Soft green for idle games
 					word: '#D3E4FD',        // Soft blue for word games
 					strategy: '#FFDEE2',    // Soft pink for strategy games
+					card: '#FEF7CD',        // Soft yellow for card games 
+					runner: '#FDE1D3',      // Soft peach for runner games
+					simulation: '#F1F0FB',  // Soft gray for simulation games
+					text: '#D6D6D6',        // Light gray for text-based games
+					unique: '#C8C8C9',      // Silver gray for unique mechanics games
 				}
 			},
 			borderRadius: {

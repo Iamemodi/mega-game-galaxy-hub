@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
-import { GameControls } from "../components/GameControls";
-import { saveScore } from "../utils/gameUtils";
+import { GameControls } from "../../components/GameControls";
+import { saveScore } from "../../utils/gameUtils";
 
 // Updating the type definitions to correctly handle empty cells vs tile values
 type CellValue = 0 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048;

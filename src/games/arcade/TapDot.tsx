@@ -1,7 +1,6 @@
-
 import { useState, useEffect, useRef } from "react";
-import { GameControls } from "../components/GameControls";
-import { saveScore } from "../utils/gameUtils";
+import { GameControls } from "../../components/GameControls";
+import { saveScore } from "../../utils/gameUtils";
 
 export function TapDot() {
   const [score, setScore] = useState(0);
