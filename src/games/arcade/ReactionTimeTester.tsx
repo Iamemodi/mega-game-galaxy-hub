@@ -68,8 +68,8 @@ export function ReactTimeTester() {
       
       setState("clicked");
       
-      // Save score to game storage
-      saveScore("reaction-tester", time, "min");
+      // Save score to game storage - fixing this line
+      saveScore("reaction-tester", time);
       
       // Start another round if under 5 attempts
       setAttempts(prev => {
