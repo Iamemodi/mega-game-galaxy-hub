@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Game specific colors
+				game: {
+					primary: '#9b87f5',     // Primary purple
+					secondary: '#7E69AB',   // Secondary purple
+					accent: '#D6BCFA',      // Light purple
+					dark: '#1A1F2C',        // Dark purple
+					puzzle: '#E5DEFF',      // Soft purple for puzzle games
+					arcade: '#FEC6A1',      // Soft orange for arcade games
+					idle: '#F2FCE2',        // Soft green for idle games
+					word: '#D3E4FD',        // Soft blue for word games
+					strategy: '#FFDEE2',    // Soft pink for strategy games
 				}
 			},
 			borderRadius: {
@@ -84,11 +97,27 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-soft': {
+					'0%, 100%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(1.05)' },
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				'pop': {
+					'0%': { transform: 'scale(0.9)', opacity: '0.5' },
+					'70%': { transform: 'scale(1.1)' },
+					'100%': { transform: 'scale(1)', opacity: '1' },
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+				'float': 'float 3s ease-in-out infinite',
+				'pop': 'pop 0.3s ease-out forwards',
 			}
 		}
 	},
