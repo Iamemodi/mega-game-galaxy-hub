@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { GameControls } from "../components/GameControls";
 import { saveScore } from "../utils/gameUtils";
 
-// Updating the type definition to separate empty cells from tile values
+// Updating the type definitions to correctly handle empty cells vs tile values
 type CellValue = 0 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048;
 type TileValue = 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048;
 type Direction = "up" | "down" | "left" | "right";
@@ -92,6 +92,7 @@ export function Game2048() {
 
     const moveLeft = () => {
       for (let row = 0; row < 4; row++) {
+        // Filter out zeros, we're dealing only with tile values now
         let arr = newGrid[row].filter(val => val !== 0) as TileValue[];
         
         // Merge identical adjacent tiles
@@ -99,11 +100,9 @@ export function Game2048() {
           if (arr[i] === arr[i + 1]) {
             arr[i] = (arr[i] * 2) as TileValue;
             scoreIncrease += arr[i];
-            arr[i + 1] = 0 as CellValue; // This will be filtered out
+            arr.splice(i + 1, 1); // Remove the merged tile
           }
         }
-        
-        arr = arr.filter(val => val !== 0) as TileValue[];
         
         // Fill remaining cells with 0
         const filledArr: CellValue[] = [...arr];
@@ -124,6 +123,7 @@ export function Game2048() {
 
     const moveRight = () => {
       for (let row = 0; row < 4; row++) {
+        // Filter out zeros, we're dealing only with tile values now
         let arr = newGrid[row].filter(val => val !== 0) as TileValue[];
         
         // Merge identical adjacent tiles from right
@@ -131,11 +131,9 @@ export function Game2048() {
           if (arr[i] === arr[i - 1]) {
             arr[i] = (arr[i] * 2) as TileValue;
             scoreIncrease += arr[i];
-            arr[i - 1] = 0 as CellValue; // This will be filtered out
+            arr.splice(i - 1, 1); // Remove the merged tile
           }
         }
-        
-        arr = arr.filter(val => val !== 0) as TileValue[];
         
         // Fill remaining cells with 0 (from the left)
         const filledArr: CellValue[] = [];
@@ -163,18 +161,17 @@ export function Game2048() {
           arr.push(newGrid[row][col]);
         }
         
-        // Filter, merge and process like moveLeft
+        // Filter, merge and process
         let filteredArr = arr.filter(val => val !== 0) as TileValue[];
         
+        // Merge tiles
         for (let i = 0; i < filteredArr.length - 1; i++) {
           if (filteredArr[i] === filteredArr[i + 1]) {
             filteredArr[i] = (filteredArr[i] * 2) as TileValue;
             scoreIncrease += filteredArr[i];
-            filteredArr[i + 1] = 0 as CellValue;
+            filteredArr.splice(i + 1, 1); // Remove the merged tile
           }
         }
-        
-        filteredArr = filteredArr.filter(val => val !== 0) as TileValue[];
         
         // Fill remaining cells with 0
         const filledArr: CellValue[] = [...filteredArr];
@@ -200,18 +197,17 @@ export function Game2048() {
           arr.push(newGrid[row][col]);
         }
         
-        // Filter, merge and process like moveRight
+        // Filter, merge and process
         let filteredArr = arr.filter(val => val !== 0) as TileValue[];
         
+        // Merge tiles from bottom to top
         for (let i = filteredArr.length - 1; i > 0; i--) {
           if (filteredArr[i] === filteredArr[i - 1]) {
             filteredArr[i] = (filteredArr[i] * 2) as TileValue;
             scoreIncrease += filteredArr[i];
-            filteredArr[i - 1] = 0 as CellValue;
+            filteredArr.splice(i - 1, 1); // Remove the merged tile
           }
         }
-        
-        filteredArr = filteredArr.filter(val => val !== 0) as TileValue[];
         
         // Fill remaining cells with 0 (from the top)
         const filledArr: CellValue[] = [];
