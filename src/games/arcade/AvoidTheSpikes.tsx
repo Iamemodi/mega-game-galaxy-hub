@@ -80,18 +80,57 @@ export function AvoidTheSpikes() {
   };
   
   // Handle player movement
-  const handleMove = (e: React.MouseEvent | React.TouchEvent | MouseEvent) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (gameOver) return;
     
     const container = document.getElementById("game-area");
     if (!container) return;
     
     const rect = container.getBoundingClientRect();
-    const clientX = 'touches' in e 
-      ? e.touches[0].clientX 
-      : (e as MouseEvent).clientX;
+    const relativeX = e.clientX - rect.left;
+    const percentX = (relativeX / rect.width) * 100;
     
-    const relativeX = clientX - rect.left;
+    // Clamp position
+    setPlayerPosition(Math.max(5, Math.min(95, percentX)));
+  };
+  
+  const handleTouchMove = (e: TouchEvent) => {
+    if (gameOver) return;
+    
+    const container = document.getElementById("game-area");
+    if (!container) return;
+    
+    const rect = container.getBoundingClientRect();
+    const relativeX = e.touches[0].clientX - rect.left;
+    const percentX = (relativeX / rect.width) * 100;
+    
+    // Clamp position
+    setPlayerPosition(Math.max(5, Math.min(95, percentX)));
+  };
+  
+  // React event handlers
+  const handleReactMouseMove = (e: React.MouseEvent) => {
+    if (gameOver) return;
+    
+    const container = e.currentTarget;
+    if (!container) return;
+    
+    const rect = container.getBoundingClientRect();
+    const relativeX = e.clientX - rect.left;
+    const percentX = (relativeX / rect.width) * 100;
+    
+    // Clamp position
+    setPlayerPosition(Math.max(5, Math.min(95, percentX)));
+  };
+  
+  const handleReactTouchMove = (e: React.TouchEvent) => {
+    if (gameOver) return;
+    
+    const container = e.currentTarget;
+    if (!container) return;
+    
+    const rect = container.getBoundingClientRect();
+    const relativeX = e.touches[0].clientX - rect.left;
     const percentX = (relativeX / rect.width) * 100;
     
     // Clamp position
@@ -120,12 +159,12 @@ export function AvoidTheSpikes() {
   
   useEffect(() => {
     if (gameActive && !gameOver) {
-      document.addEventListener("mousemove", handleMove);
-      document.addEventListener("touchmove", handleMove);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("touchmove", handleTouchMove, { passive: true });
     }
     return () => {
-      document.removeEventListener("mousemove", handleMove);
-      document.removeEventListener("touchmove", handleMove);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("touchmove", handleTouchMove);
     };
   }, [gameActive, gameOver]);
   
@@ -140,8 +179,8 @@ export function AvoidTheSpikes() {
         <div 
           id="game-area"
           className="bg-game-arcade/30 w-full max-w-md mx-auto h-96 rounded-lg relative overflow-hidden"
-          onMouseMove={handleMove}
-          onTouchMove={handleMove}
+          onMouseMove={handleReactMouseMove}
+          onTouchMove={handleReactTouchMove}
         >
           {/* Player */}
           <div 
@@ -194,3 +233,4 @@ export function AvoidTheSpikes() {
     </div>
   );
 }
+
