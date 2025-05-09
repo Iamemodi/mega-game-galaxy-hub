@@ -16,7 +16,7 @@ import { WordScramble } from "../games/word/WordScramble";
 import { RockPaperScissors } from "../games/strategy/RockPaperScissors";
 import { IdleClicker } from "../games/idle/IdleClicker";
 
-// Import new games
+// Import previously added games
 import { ColorMatch } from "../games/puzzle/ColorMatch";
 import { MathPuzzle } from "../games/puzzle/MathPuzzle";
 import { WordSearch } from "../games/word/WordSearch";
@@ -28,6 +28,19 @@ import { SnakeGame } from "../games/arcade/SnakeGame";
 import { CookieClicker } from "../games/idle/CookieClicker";
 import { TowerOfHanoi } from "../games/puzzle/TowerOfHanoi";
 
+// Import new games
+import { SpotTheDifference } from "../games/puzzle/SpotTheDifference";
+import { WordAssociation } from "../games/word/WordAssociation";
+import { ColorSwitch } from "../games/arcade/ColorSwitch";
+import { RhythmTap } from "../games/arcade/RhythmTap";
+import { TreasureHunt } from "../games/strategy/TreasureHunt";
+import { FarmSimulator } from "../games/idle/FarmSimulator";
+import { QuotePuzzle } from "../games/word/QuotePuzzle";
+import { MemoryMatch } from "../games/puzzle/MemoryMatch";
+import { PathFinder } from "../games/strategy/PathFinder";
+import { ChessPuzzle } from "../games/strategy/ChessPuzzle";
+import { MiningMagnate } from "../games/idle/MiningMagnate";
+
 // Map of game IDs to their components
 const GAMES = {
   // Arcade games
@@ -37,6 +50,8 @@ const GAMES = {
   "tap-button": TapTheButton,
   "flappy-bird": FlappyBird,
   "snake-game": SnakeGame,
+  "color-switch": ColorSwitch,
+  "rhythm-tap": RhythmTap,
   
   // Puzzle games
   "2048": Game2048,
@@ -45,21 +60,30 @@ const GAMES = {
   "color-match": ColorMatch,
   "math-puzzle": MathPuzzle,
   "tower-of-hanoi": TowerOfHanoi,
+  "spot-difference": SpotTheDifference,
+  "memory-match": MemoryMatch,
   
   // Word games
   "word-scramble": WordScramble,
   "word-search": WordSearch,
   "hangman": Hangman,
+  "word-association": WordAssociation,
+  "quote-puzzle": QuotePuzzle,
   
   // Strategy games
   "tic-tac-toe": TicTacToe,
   "rock-paper-scissors": RockPaperScissors,
   "connect-four": ConnectFour,
   "simon-says": SimonSays,
+  "treasure-hunt": TreasureHunt,
+  "path-finder": PathFinder,
+  "chess-puzzle": ChessPuzzle,
   
   // Idle games
   "idle-clicker": IdleClicker,
   "cookie-clicker": CookieClicker,
+  "farm-simulator": FarmSimulator,
+  "mining-magnate": MiningMagnate,
 };
 
 const GamePage = () => {
