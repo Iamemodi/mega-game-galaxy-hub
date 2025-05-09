@@ -9,19 +9,35 @@ import { Game2048 } from "../games/puzzle/Game2048";
 import { MemoryFlip } from "../games/puzzle/MemoryFlip";
 import { ReactTimeTester } from "../games/arcade/ReactionTimeTester";
 import { TicTacToe } from "../games/strategy/TicTacToe";
+import { AvoidTheSpikes } from "../games/arcade/AvoidTheSpikes";
+import { TapTheButton } from "../games/arcade/TapTheButton";
+import { SlidingPuzzle } from "../games/puzzle/SlidingPuzzle";
+import { WordScramble } from "../games/word/WordScramble";
+import { RockPaperScissors } from "../games/strategy/RockPaperScissors";
+import { IdleClicker } from "../games/idle/IdleClicker";
 
 // Map of game IDs to their components
 const GAMES = {
   // Arcade games
   "tap-dot": TapDot,
   "reaction-tester": ReactTimeTester,
+  "avoid-spikes": AvoidTheSpikes,
+  "tap-button": TapTheButton,
   
   // Puzzle games
   "2048": Game2048,
   "memory-flip": MemoryFlip,
+  "sliding-puzzle": SlidingPuzzle,
+  
+  // Word games
+  "word-scramble": WordScramble,
   
   // Strategy games
   "tic-tac-toe": TicTacToe,
+  "rock-paper-scissors": RockPaperScissors,
+  
+  // Idle games
+  "idle-clicker": IdleClicker,
 };
 
 const GamePage = () => {

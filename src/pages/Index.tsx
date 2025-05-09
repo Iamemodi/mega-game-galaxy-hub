@@ -25,6 +25,42 @@ const Index = () => {
           <h2 className="text-2xl font-bold mb-4">Recently Added Games</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <GameCard 
+              title="Idle Clicker" 
+              category="Idle"
+              gameId="idle-clicker" 
+              bgColor="bg-game-idle" 
+            />
+            <GameCard 
+              title="Rock Paper Scissors" 
+              category="Strategy"
+              gameId="rock-paper-scissors" 
+              bgColor="bg-game-strategy" 
+            />
+            <GameCard 
+              title="Word Scramble" 
+              category="Word"
+              gameId="word-scramble" 
+              bgColor="bg-game-word" 
+            />
+            <GameCard 
+              title="Sliding Puzzle" 
+              category="Puzzle"
+              gameId="sliding-puzzle" 
+              bgColor="bg-game-puzzle" 
+            />
+            <GameCard 
+              title="Tap The Button" 
+              category="Arcade"
+              gameId="tap-button" 
+              bgColor="bg-game-arcade" 
+            />
+            <GameCard 
+              title="Avoid The Spikes" 
+              category="Arcade"
+              gameId="avoid-spikes" 
+              bgColor="bg-game-arcade" 
+            />
+            <GameCard 
               title="Reaction Time Tester" 
               category="Arcade"
               gameId="reaction-tester" 

@@ -18,7 +18,24 @@ const gamesByCategory: Record<string, GameItem[]> = {
       description: "Test your reflexes",
       icon: "●",
     },
-    // Add more arcade games here
+    {
+      id: "reaction-tester",
+      title: "Reaction Time Tester",
+      description: "How fast can you react?",
+      icon: "⚡",
+    },
+    {
+      id: "avoid-spikes",
+      title: "Avoid the Spikes",
+      description: "Dodge the obstacles",
+      icon: "▲",
+    },
+    {
+      id: "tap-button",
+      title: "Tap The Button",
+      description: "Tap as fast as you can",
+      icon: "○",
+    },
   ],
   puzzle: [
     {
@@ -33,11 +50,43 @@ const gamesByCategory: Record<string, GameItem[]> = {
       description: "Train your memory",
       icon: "☰",
     },
-    // Add more puzzle games here
+    {
+      id: "sliding-puzzle",
+      title: "Sliding Puzzle",
+      description: "Arrange the tiles",
+      icon: "◫",
+    },
   ],
-  idle: [],
-  word: [],
-  strategy: [],
+  idle: [
+    {
+      id: "idle-clicker",
+      title: "Idle Clicker",
+      description: "Click and earn coins",
+      icon: "💰",
+    },
+  ],
+  word: [
+    {
+      id: "word-scramble",
+      title: "Word Scramble",
+      description: "Unscramble the words",
+      icon: "Aa",
+    },
+  ],
+  strategy: [
+    {
+      id: "tic-tac-toe",
+      title: "Tic Tac Toe",
+      description: "Classic 3x3 game",
+      icon: "✕",
+    },
+    {
+      id: "rock-paper-scissors",
+      title: "Rock Paper Scissors",
+      description: "Make your choice",
+      icon: "✊",
+    },
+  ],
 };
 
 // Category display names and colors

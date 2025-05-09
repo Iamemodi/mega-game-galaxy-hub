@@ -12,12 +12,36 @@ type FeaturedGame = {
 
 const featuredGames: FeaturedGame[] = [
   {
+    id: "idle-clicker",
+    title: "Idle Clicker",
+    description: "Click and earn",
+    category: "idle",
+    color: "from-game-idle to-game-idle/70",
+    icon: "💰",
+  },
+  {
     id: "tap-dot",
     title: "Tap the Dot",
     description: "Test your reflexes",
     category: "arcade",
     color: "from-game-arcade to-game-arcade/70",
     icon: "●",
+  },
+  {
+    id: "word-scramble",
+    title: "Word Scramble",
+    description: "Unscramble words",
+    category: "word",
+    color: "from-game-word to-game-word/70",
+    icon: "Aa",
+  },
+  {
+    id: "rock-paper-scissors",
+    title: "Rock Paper Scissors",
+    description: "Make your choice",
+    category: "strategy",
+    color: "from-game-strategy to-game-strategy/70",
+    icon: "✊",
   },
   {
     id: "memory-flip",
