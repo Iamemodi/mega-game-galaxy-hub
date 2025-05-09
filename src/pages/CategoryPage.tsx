@@ -36,6 +36,18 @@ const gamesByCategory: Record<string, GameItem[]> = {
       description: "Tap as fast as you can",
       icon: "○",
     },
+    {
+      id: "flappy-bird",
+      title: "Flappy Bird",
+      description: "Fly through pipes",
+      icon: "🐦",
+    },
+    {
+      id: "snake-game",
+      title: "Snake",
+      description: "Eat and grow longer",
+      icon: "🐍",
+    },
   ],
   puzzle: [
     {
@@ -56,6 +68,24 @@ const gamesByCategory: Record<string, GameItem[]> = {
       description: "Arrange the tiles",
       icon: "◫",
     },
+    {
+      id: "color-match",
+      title: "Color Match",
+      description: "Match the right color",
+      icon: "🎨",
+    },
+    {
+      id: "math-puzzle",
+      title: "Math Puzzle",
+      description: "Solve math problems",
+      icon: "➗",
+    },
+    {
+      id: "tower-of-hanoi",
+      title: "Tower of Hanoi",
+      description: "Move the stack of disks",
+      icon: "🏔️",
+    },
   ],
   idle: [
     {
@@ -64,6 +94,12 @@ const gamesByCategory: Record<string, GameItem[]> = {
       description: "Click and earn coins",
       icon: "💰",
     },
+    {
+      id: "cookie-clicker",
+      title: "Cookie Clicker",
+      description: "Bake virtual cookies",
+      icon: "🍪",
+    },
   ],
   word: [
     {
@@ -71,6 +107,18 @@ const gamesByCategory: Record<string, GameItem[]> = {
       title: "Word Scramble",
       description: "Unscramble the words",
       icon: "Aa",
+    },
+    {
+      id: "word-search",
+      title: "Word Search",
+      description: "Find hidden words",
+      icon: "🔍",
+    },
+    {
+      id: "hangman",
+      title: "Hangman",
+      description: "Guess the word",
+      icon: "✎",
     },
   ],
   strategy: [
@@ -85,6 +133,18 @@ const gamesByCategory: Record<string, GameItem[]> = {
       title: "Rock Paper Scissors",
       description: "Make your choice",
       icon: "✊",
+    },
+    {
+      id: "connect-four",
+      title: "Connect Four",
+      description: "Connect 4 in a row",
+      icon: "⚫️",
+    },
+    {
+      id: "simon-says",
+      title: "Simon Says",
+      description: "Remember the pattern",
+      icon: "🎵",
     },
   ],
 };

@@ -16,6 +16,18 @@ import { WordScramble } from "../games/word/WordScramble";
 import { RockPaperScissors } from "../games/strategy/RockPaperScissors";
 import { IdleClicker } from "../games/idle/IdleClicker";
 
+// Import new games
+import { ColorMatch } from "../games/puzzle/ColorMatch";
+import { MathPuzzle } from "../games/puzzle/MathPuzzle";
+import { WordSearch } from "../games/word/WordSearch";
+import { Hangman } from "../games/word/Hangman";
+import { ConnectFour } from "../games/strategy/ConnectFour";
+import { SimonSays } from "../games/strategy/SimonSays";
+import { FlappyBird } from "../games/arcade/FlappyBird";
+import { SnakeGame } from "../games/arcade/SnakeGame";
+import { CookieClicker } from "../games/idle/CookieClicker";
+import { TowerOfHanoi } from "../games/puzzle/TowerOfHanoi";
+
 // Map of game IDs to their components
 const GAMES = {
   // Arcade games
@@ -23,21 +35,31 @@ const GAMES = {
   "reaction-tester": ReactTimeTester,
   "avoid-spikes": AvoidTheSpikes,
   "tap-button": TapTheButton,
+  "flappy-bird": FlappyBird,
+  "snake-game": SnakeGame,
   
   // Puzzle games
   "2048": Game2048,
   "memory-flip": MemoryFlip,
   "sliding-puzzle": SlidingPuzzle,
+  "color-match": ColorMatch,
+  "math-puzzle": MathPuzzle,
+  "tower-of-hanoi": TowerOfHanoi,
   
   // Word games
   "word-scramble": WordScramble,
+  "word-search": WordSearch,
+  "hangman": Hangman,
   
   // Strategy games
   "tic-tac-toe": TicTacToe,
   "rock-paper-scissors": RockPaperScissors,
+  "connect-four": ConnectFour,
+  "simon-says": SimonSays,
   
   // Idle games
   "idle-clicker": IdleClicker,
+  "cookie-clicker": CookieClicker,
 };
 
 const GamePage = () => {
