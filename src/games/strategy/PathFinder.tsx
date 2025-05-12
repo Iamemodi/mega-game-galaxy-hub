@@ -68,7 +68,7 @@ export function PathFinder() {
     // Create empty grid
     const newGrid: Cell[][] = Array(size).fill(null).map((_, y) => 
       Array(size).fill(null).map((_, x) => ({
-        type: 'empty',
+        type: 'empty' as CellType,
         x,
         y,
         visited: false,
@@ -386,7 +386,7 @@ export function PathFinder() {
     const newGrid = grid.map(row => 
       row.map(cell => {
         if (cell.type === 'wall') {
-          return { ...cell, type: 'empty' };
+          return { ...cell, type: 'empty' as CellType };
         }
         return cell;
       })
