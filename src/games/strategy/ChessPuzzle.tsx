@@ -618,16 +618,16 @@ export function ChessPuzzle() {
   // Get cell style
   const getCellClass = (x: number, y: number) => {
     const isBlackSquare = (x + y) % 2 === 1;
-    let baseClass = isBlackSquare ? 'bg-gray-500' : 'bg-gray-300';
+    let baseClass = isBlackSquare ? 'bg-neutral-600' : 'bg-amber-100';
     
     if (board[y][x].selected) {
-      baseClass = 'bg-blue-300';
+      baseClass = isBlackSquare ? 'bg-blue-700' : 'bg-blue-300';
     } else if (board[y][x].highlight) {
-      baseClass = 'bg-yellow-300';
+      baseClass = isBlackSquare ? 'bg-yellow-700' : 'bg-yellow-300';
     } else if (board[y][x].validMove) {
       baseClass = board[y][x].piece 
-        ? 'bg-red-300' // Can capture
-        : 'bg-green-200'; // Can move to
+        ? (isBlackSquare ? 'bg-red-700' : 'bg-red-300') // Can capture
+        : (isBlackSquare ? 'bg-green-700' : 'bg-green-300'); // Can move to
     }
     
     return baseClass;
@@ -639,69 +639,111 @@ export function ChessPuzzle() {
     const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
     return files[x] + ranks[y];
   };
-  
+
   return (
-    <div className="game-container p-4">
+    <div className="game-container p-4 bg-gradient-to-br from-amber-50 to-amber-100">
       <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold mb-2">Chess Puzzle</h1>
+        <motion.h1 
+          className="text-4xl font-bold mb-2 text-amber-900"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Chess Puzzle Challenge
+        </motion.h1>
         {gameActive && (
-          <div className="flex flex-wrap justify-center gap-6">
-            <div className="text-xl font-bold">Score: {score}</div>
-            <div className="text-xl font-bold">Time: {timeLeft}s</div>
-            <div className="text-xl font-bold">Puzzle: {puzzleIndex + 1}/{PUZZLES.length}</div>
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+            <motion.div 
+              className="text-xl font-bold px-4 py-2 bg-white/70 backdrop-blur-sm rounded-xl shadow-sm"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              Score: {score}
+            </motion.div>
+            <motion.div 
+              className="text-xl font-bold px-4 py-2 bg-white/70 backdrop-blur-sm rounded-xl shadow-sm"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Time: {timeLeft}s
+            </motion.div>
+            <motion.div 
+              className="text-xl font-bold px-4 py-2 bg-white/70 backdrop-blur-sm rounded-xl shadow-sm"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Puzzle: {puzzleIndex + 1}/{PUZZLES.length}
+            </motion.div>
           </div>
         )}
       </div>
 
       {!gameActive && !gameOver ? (
-        <div className="text-center max-w-md mx-auto">
-          <p className="mb-6">
-            Solve chess puzzles by finding the best move. Play as white and complete each challenge!
+        <div className="text-center max-w-md mx-auto bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl">
+          <p className="mb-6 text-lg text-gray-700">
+            Test your chess skills by solving tactical puzzles. Play as white and find the best move in each position!
           </p>
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <div className="mb-6 space-y-4">
+            <div className="font-medium text-amber-800">Puzzle Difficulty Levels:</div>
+            <div className="grid grid-cols-3 gap-2 text-sm">
+              <div className="bg-green-100 border border-green-200 p-2 rounded-lg">Easy</div>
+              <div className="bg-yellow-100 border border-yellow-200 p-2 rounded-lg">Medium</div>
+              <div className="bg-red-100 border border-red-200 p-2 rounded-lg">Hard</div>
+            </div>
+          </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button 
               onClick={startGame}
-              className="bg-game-strategy hover:bg-pink-300 text-black px-6 py-3 rounded-lg font-bold"
+              className="bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white px-8 py-3 rounded-xl font-bold text-lg shadow-md"
             >
-              Start Game
+              Start Challenge
             </Button>
           </motion.div>
         </div>
       ) : gameOver ? (
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
-          <p className="text-xl mb-6">Your final score: {score}</p>
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+        <motion.div 
+          className="text-center bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl max-w-md mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-3xl font-bold mb-4 text-amber-700">Challenge Complete!</h2>
+          <div className="text-7xl mb-6">♔</div>
+          <p className="text-2xl mb-6">Your final score: <span className="font-bold text-amber-600">{score}</span></p>
+          
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               onClick={startGame}
-              className="bg-game-strategy hover:bg-pink-300 text-black px-6 py-3 rounded-lg font-bold"
+              className="bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white px-8 py-3 rounded-xl font-bold text-lg shadow-md"
             >
               Play Again
             </Button>
           </motion.div>
-        </div>
+        </motion.div>
       ) : (
         <div className="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto">
           {/* Chess board */}
-          <div className="flex-1">
-            <div className="aspect-square max-w-md mx-auto border-2 border-gray-800">
+          <motion.div 
+            className="flex-1"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="aspect-square max-w-md mx-auto border-4 border-amber-900 rounded-md shadow-xl overflow-hidden">
               {board.map((row, y) => (
                 <div key={y} className="flex">
                   {row.map((cell, x) => (
                     <div
                       key={`${x}-${y}`}
-                      className={`${getCellClass(x, y)} w-1/8 h-0 pb-[12.5%] relative cursor-pointer`}
+                      className={`${getCellClass(x, y)} w-1/8 h-0 pb-[12.5%] relative cursor-pointer transition-colors duration-200`}
                       onClick={() => handleCellClick(x, y)}
                     >
                       {/* Cell notation */}
                       {((y === 7 && x === 0) || (y === 7) || (x === 0)) && (
-                        <div className="absolute text-xs opacity-60 pointer-events-none">
+                        <div className="absolute text-[8px] sm:text-xs opacity-60 pointer-events-none p-0.5">
                           {y === 7 && x === 0 && getCellNotation(x, y)}
                           {y === 7 && x !== 0 && getCellNotation(x, y)[0]}
                           {x === 0 && y !== 7 && getCellNotation(x, y)[1]}
@@ -710,27 +752,32 @@ export function ChessPuzzle() {
                       
                       {/* Chess piece */}
                       {cell.piece && (
-                        <span className="absolute inset-0 flex items-center justify-center text-2xl sm:text-3xl">
+                        <div className="absolute inset-0 flex items-center justify-center text-2xl sm:text-3xl md:text-4xl">
                           {CHESS_PIECES[cell.piece.color][cell.piece.type]}
-                        </span>
+                        </div>
                       )}
                     </div>
                   ))}
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
           
           {/* Puzzle info */}
-          <div className="w-full md:w-64 bg-gray-100 p-4 rounded-lg">
-            <h3 className="font-bold text-lg mb-1">{PUZZLES[puzzleIndex].title}</h3>
-            <div className="text-xs mb-2 inline-block bg-gray-200 px-2 py-1 rounded">
+          <motion.div 
+            className="w-full md:w-72 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <h3 className="font-bold text-xl mb-1 text-amber-800">{PUZZLES[puzzleIndex].title}</h3>
+            <div className="text-xs mb-2 inline-block bg-amber-100 px-2 py-1 rounded">
               {PUZZLES[puzzleIndex].difficulty}
             </div>
-            <p className="text-sm mb-4">{PUZZLES[puzzleIndex].description}</p>
+            <p className="text-sm mb-4 text-gray-700">{PUZZLES[puzzleIndex].description}</p>
             
-            <div className="mb-4">
-              <h4 className="font-semibold text-sm mb-1">Objective:</h4>
+            <div className="mb-4 bg-amber-50 p-3 rounded-lg">
+              <h4 className="font-semibold text-sm mb-1 text-amber-700">Objective:</h4>
               <p className="text-xs">Find the best move playing as White.</p>
             </div>
             
@@ -738,36 +785,41 @@ export function ChessPuzzle() {
               <Button 
                 onClick={showHint}
                 disabled={helpUsed}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black mb-4"
+                className={`w-full ${helpUsed 
+                  ? 'bg-gray-300 text-gray-600' 
+                  : 'bg-amber-400 hover:bg-amber-500 text-black'} mb-4 transition-colors`}
               >
                 {helpUsed ? "Hint Used" : "Get Hint (-50 pts)"}
               </Button>
             )}
             
             {puzzleComplete && (
-              <div className="bg-green-100 p-2 rounded mb-4">
+              <div className="bg-green-100 p-3 rounded-lg mb-4 border border-green-300">
                 <p className="text-sm font-semibold text-green-700">
-                  Puzzle Solved!
+                  Puzzle Solved! ✓
                 </p>
-                <p className="text-xs">
-                  Waiting for next puzzle...
+                <p className="text-xs text-green-600">
+                  Next puzzle loading...
                 </p>
               </div>
             )}
             
             {movesMade.length > 0 && (
               <div>
-                <h4 className="font-semibold text-sm mb-1">Moves Made:</h4>
+                <h4 className="font-semibold text-sm mb-1 text-amber-700">Moves Made:</h4>
                 <div className="text-xs space-y-1 max-h-40 overflow-y-auto">
                   {movesMade.map((move, index) => (
-                    <div key={index} className="bg-white p-1 rounded">
-                      {getCellNotation(move.from[0], move.from[1])} → {getCellNotation(move.to[0], move.to[1])}
+                    <div key={index} className="bg-amber-50 p-2 rounded flex justify-between items-center">
+                      <div>
+                        {getCellNotation(move.from[0], move.from[1])} → {getCellNotation(move.to[0], move.to[1])}
+                      </div>
+                      <div className="text-amber-500">{index + 1}</div>
                     </div>
                   ))}
                 </div>
               </div>
             )}
-          </div>
+          </motion.div>
         </div>
       )}
 

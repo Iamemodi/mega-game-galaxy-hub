@@ -1,5 +1,5 @@
+
 import { useParams, Navigate } from "react-router-dom";
-import { Header } from "../components/Header";
 import { Button } from "../components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -71,6 +71,7 @@ import { TowerDefense } from "../games/strategy/TowerDefense";
 import { PicrossGame } from "../games/puzzle/PicrossGame";
 import { WordRush } from "../games/word/WordRush";
 import { PinballGame } from "../games/arcade/PinballGame";
+import { motion } from "framer-motion";
 
 // Map of game IDs to their components
 const GAMES = {
@@ -162,17 +163,32 @@ const GamePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container px-4 py-2">
-        <Link to="/">
-          <Button variant="outline" size="sm" className="mb-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Games
-          </Button>
-        </Link>
+      <div className="container px-4 py-4">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Link to="/">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mb-4 group hover:bg-primary/10"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4 group-hover:translate-x-[-2px] transition-transform" />
+              Back to Games
+            </Button>
+          </Link>
+        </motion.div>
       </div>
       <main className="flex-1">
-        {renderGame()}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          {renderGame()}
+        </motion.div>
       </main>
     </div>
   );

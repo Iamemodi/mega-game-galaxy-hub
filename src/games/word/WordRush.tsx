@@ -1,402 +1,405 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { GameControls } from "@/components/GameControls";
 import { saveScore } from "@/utils/gameUtils";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
-// List of common English letters with their frequencies for better letter distribution
-const LETTER_FREQUENCIES: { [key: string]: number } = {
-  'A': 8.2, 'B': 1.5, 'C': 2.8, 'D': 4.3, 'E': 12.7, 'I': 7.0,
-  'F': 2.2, 'G': 2.0, 'H': 6.1, 'J': 0.2, 'K': 0.8, 'L': 4.0,
-  'M': 2.4, 'N': 6.7, 'O': 7.5, 'P': 1.9, 'Q': 0.1, 'R': 6.0,
-  'S': 6.3, 'T': 9.1, 'U': 2.8, 'V': 1.0, 'W': 2.4, 'X': 0.2,
-  'Y': 2.0, 'Z': 0.1
+// Word lists by difficulty
+const WORD_LISTS = {
+  easy: [
+    "cat", "dog", "bat", "hat", "sun", "run", "fun", "box", "fox", "sky",
+    "map", "cap", "nap", "tap", "pen", "hen", "ten", "red", "bed", "fed",
+    "pot", "hot", "dot", "lot", "jog", "log", "fog", "big", "pig", "wig"
+  ],
+  medium: [
+    "black", "white", "green", "house", "mouse", "cloud", "proud", "party",
+    "happy", "dance", "plant", "truck", "clock", "block", "light", "night",
+    "right", "tight", "smile", "while", "frown", "crown", "beach", "peach",
+    "teach", "reach", "sweet", "treat", "meat", "wheat"
+  ],
+  hard: [
+    "elephant", "computer", "vacation", "dinosaur", "mountain", "birthday",
+    "keyboard", "monitor", "exercise", "sandwich", "calendar", "question",
+    "adventure", "treasure", "princess", "chocolate", "telescope", "afternoon",
+    "butterfly", "beginning", "beautiful", "wonderful", "different", "important",
+    "dangerous", "everyone", "together", "remember", "universe", "community"
+  ]
 };
 
-// Common vowels
-const VOWELS = ['A', 'E', 'I', 'O', 'U'];
+// Game settings
+const INITIAL_WORD_TIME = 7; // Starting time per word in seconds
+const DIFFICULTY_MULTIPLIER = {
+  easy: 1,
+  medium: 1.3,
+  hard: 1.6
+};
+const TIME_DECREASE_RATE = 0.1; // Seconds to decrease per correct word
 
-// Dictionary for word validation (partial - just for demo)
-const DICTIONARY = [
-  "ACT", "ADD", "AGE", "AGO", "AIR", "ALL", "AND", "ANT", "ANY", "APE", "ART", "ASK", "BAD", "BAG", 
-  "BAR", "BAT", "BEE", "BIG", "BIT", "BOX", "BOY", "BUG", "BUS", "BUY", "CAB", "CAP", "CAR", "CAT", 
-  "COW", "CRY", "CUP", "CUT", "DAD", "DAY", "DIG", "DOG", "DOT", "DRY", "EAR", "EAT", "EGG", "END",
-  "EYE", "FAR", "FAT", "FIT", "FLY", "FOR", "FUN", "GAS", "GET", "GOD", "GOT", "GUN", "GYM", "HAD",
-  "HAT", "HER", "HIM", "HIS", "HIT", "HOT", "HOW", "ICE", "INK", "ITS", "JOB", "JOY", "KEY", "KID",
-  "LAW", "LAY", "LEG", "LET", "LIE", "LIP", "LOG", "LOW", "MAD", "MAN", "MAP", "MAY", "MEN", "MIX",
-  "MOB", "MOP", "MUD", "MUG", "NET", "NEW", "NOD", "NOT", "NOW", "NUT", "OFF", "OIL", "OLD", "ONE",
-  "OUR", "OUT", "OWL", "OWN", "PAD", "PAN", "PAY", "PEN", "PET", "PIE", "PIG", "PIN", "POT", "PUT",
-  "RAT", "RAW", "RED", "RIB", "RID", "RIP", "ROD", "ROW", "RUB", "RUG", "RUN", "SAD", "SAW", "SAY",
-  "SEA", "SEE", "SET", "SEW", "SHE", "SHY", "SIN", "SIP", "SIR", "SIT", "SIX", "SKI", "SKY", "SLY",
-  "SON", "SPY", "SUM", "SUN", "TAG", "TAP", "TAX", "TEA", "TEN", "THE", "TIE", "TIN", "TIP", "TOE",
-  "TOP", "TOY", "TRY", "TWO", "USE", "VAN", "WAR", "WAX", "WAY", "WET", "WHO", "WHY", "WIN", "WON",
-  "YES", "YET", "YOU", "ZOO",
-  
-  "ABLE", "ACID", "AWAY", "BABY", "BACK", "BALL", "BAND", "BANK", "BASE", "BATH", "BEAR", "BEAT",
-  "BEEN", "BEER", "BELL", "BELT", "BEST", "BILL", "BIRD", "BLOW", "BLUE", "BOAT", "BODY", "BOMB",
-  "BOND", "BONE", "BOOK", "BOOM", "BORN", "BOSS", "BOTH", "DOWN", "DRAW", "DUCK", "DUMP", "DUST",
-  "DUTY", "EACH", "EARN", "EAST", "EASY", "EDGE", "EGGS", "ELSE", "EVEN", "EVER", "EVIL", "EXIT",
-  "FACE", "FACT", "FADE", "FAIL", "FAIR", "FALL", "FARM", "FAST", "FEAR", "FEED", "FEEL", "FEET",
-  "FELL", "FELT", "FILE", "FILL", "FILM", "FIND", "FINE", "FIRE", "FIRM", "FISH", "FIVE", "FLAG",
-  "FLAT", "FLOW", "FOLD", "FOOD", "FOOT", "FORK", "FORM", "FOUR", "FREE", "FROM", "FUEL", "FULL",
-  "FUND", "GAIN", "GAME", "GATE", "GAVE", "GEAR", "GIFT", "GIRL", "GIVE", "GLAD", "GOAL", "GOES",
-  "GOLD", "GOLF", "GONE", "GOOD", "GRAY", "GREW", "GREY", "GROW", "GULF", "HAIR", "HALF", "HALL",
-  "HAND", "HANG", "HARD", "HARM", "HATE", "HAVE", "HEAD", "HEAR", "HEAT", "HELD", "HELL", "HELP",
-  "HERE", "HERO", "HERS", "HIGH", "HILL", "HIRE", "HOLD", "HOLE", "HOLY", "HOME", "HOPE", "HOST",
-  "HOUR", "HUGE", "HUNG", "HUNT", "HURT", "IDEA", "INCH", "INTO", "IRON", "ITEM", "JACK", "JANE",
-  "JEAN", "JOHN", "JOIN", "JUMP", "JURY", "JUST", "KEEN", "KEEP", "KENT", "KEPT", "KICK", "KILL",
-  "KIND", "KING", "KNEW", "KNOW", "LACK", "LADY", "LAID", "LAKE", "LAND", "LANE", "LAST", "LATE",
-  "LEAD", "LEFT", "LESS", "LIFE", "LIFT", "LIKE", "LINE", "LINK", "LIST", "LIVE", "LOAD", "LOAN",
-  "LOCK", "LOGO", "LONG", "LOOK", "LORD", "LOSE", "LOSS", "LOST", "LOVE", "LUCK",
-  
-  "SHIRT", "SCHOOL", "PLASTIC", "ANIMAL", "WINDOW", "SYSTEM", "PLANET", "MARKET", "FRIEND", "OFFICE",
-  "SUMMER", "WINTER", "FOREST", "GARDEN", "FAMILY", "PEOPLE", "BRIDGE", "CAMERA", "FINISH", "TARGET",
-  "FOLLOW", "HEALTH", "TRAVEL", "BEAUTY", "MINUTE", "SECOND", "OBJECT", "ENERGY", "DINNER", "MASTER"
-];
-
+// Word Rush game component
 export function WordRush() {
   const [gameActive, setGameActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [availableLetters, setAvailableLetters] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState("");
-  const [foundWords, setFoundWords] = useState<string[]>([]);
-  const [highestScoringWord, setHighestScoringWord] = useState({ word: "", score: 0 });
-  
+  const [userInput, setUserInput] = useState("");
+  const [timeLeft, setTimeLeft] = useState(INITIAL_WORD_TIME);
+  const [wordCount, setWordCount] = useState(0);
+  const [wordTimeLimit, setWordTimeLimit] = useState(INITIAL_WORD_TIME);
+  const [shake, setShake] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  
-  // Generate a set of letters
-  const generateLetters = (count: number = 12) => {
-    const letters: string[] = [];
-    
-    // Ensure at least 3 vowels
-    let vowelsCount = 0;
-    while (vowelsCount < 3) {
-      const vowel = VOWELS[Math.floor(Math.random() * VOWELS.length)];
-      letters.push(vowel);
-      vowelsCount++;
-    }
-    
-    // Fill the rest with weighted random letters
-    while (letters.length < count) {
-      // Create a weighted selection based on letter frequency
-      const allLetters = Object.keys(LETTER_FREQUENCIES);
-      const totalFrequency = Object.values(LETTER_FREQUENCIES).reduce((sum, freq) => sum + freq, 0);
-      
-      let random = Math.random() * totalFrequency;
-      let selectedLetter = 'E'; // Default if something goes wrong
-      
-      // Select a letter based on frequency
-      for (const letter in LETTER_FREQUENCIES) {
-        random -= LETTER_FREQUENCIES[letter];
-        if (random <= 0) {
-          selectedLetter = letter;
-          break;
-        }
-      }
-      
-      letters.push(selectedLetter);
-    }
-    
-    // Shuffle the letters
-    return letters.sort(() => Math.random() - 0.5);
-  };
+  const [streak, setStreak] = useState(0);
+  const [highestStreak, setHighestStreak] = useState(0);
   
   // Start game
   const startGame = () => {
     setGameActive(true);
     setGameOver(false);
     setScore(0);
-    setTimeLeft(60);
-    setAvailableLetters(generateLetters());
-    setCurrentWord("");
-    setFoundWords([]);
-    setHighestScoringWord({ word: "", score: 0 });
+    setWordCount(0);
+    setStreak(0);
+    setHighestStreak(0);
+    setWordTimeLimit(INITIAL_WORD_TIME);
+    setTimeLeft(INITIAL_WORD_TIME);
+    setUserInput("");
+    getNewWord();
     
-    // Focus the input
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
-  
-  // Handle letter click
-  const handleLetterClick = (letter: string) => {
-    if (!gameActive || gameOver) return;
-    
-    setCurrentWord(prev => prev + letter);
-    
-    // Focus the input
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
-  
-  // Handle word submission
-  const handleSubmitWord = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    
-    if (!gameActive || gameOver || !currentWord) return;
-    
-    // Convert to uppercase for comparison
-    const submittedWord = currentWord.toUpperCase();
-    
-    // Check if the word is valid
-    if (isValidWord(submittedWord)) {
-      // Calculate word score
-      const wordScore = calculateWordScore(submittedWord);
-      
-      // Update score
-      setScore(prev => prev + wordScore);
-      
-      // Add to found words
-      setFoundWords(prev => [...prev, submittedWord]);
-      
-      // Check if it's the highest scoring word
-      if (wordScore > highestScoringWord.score) {
-        setHighestScoringWord({ word: submittedWord, score: wordScore });
+    // Focus on input field
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
       }
-      
-      // Success feedback
-      toast.success(`+${wordScore} points!`);
+    }, 100);
+    
+    toast.success(`Game started! Difficulty: ${difficulty}`);
+  };
+  
+  // Get a new random word from the word list
+  const getNewWord = () => {
+    const wordList = WORD_LISTS[difficulty];
+    const randomIndex = Math.floor(Math.random() * wordList.length);
+    const newWord = wordList[randomIndex];
+    
+    // Ensure we don't get the same word twice in a row
+    if (newWord === currentWord && wordList.length > 1) {
+      getNewWord();
     } else {
-      // Error feedback
-      toast.error("Not a valid word!");
-    }
-    
-    // Clear the input
-    setCurrentWord("");
-  };
-  
-  // Calculate word score based on length
-  const calculateWordScore = (word: string) => {
-    const length = word.length;
-    
-    // Scoring table
-    if (length <= 2) return 0;
-    if (length === 3) return 100;
-    if (length === 4) return 400;
-    if (length === 5) return 800;
-    
-    // Bonus for longer words
-    return 1000 + (length - 5) * 500;
-  };
-  
-  // Validate word
-  const isValidWord = (word: string) => {
-    // Must be at least 3 letters
-    if (word.length < 3) return false;
-    
-    // Check if the word is in the dictionary
-    if (!DICTIONARY.includes(word)) return false;
-    
-    // Check if the word has already been found
-    if (foundWords.includes(word)) return false;
-    
-    // Check if the word can be formed from available letters
-    const availableLettersCopy = [...availableLetters];
-    for (const char of word) {
-      const index = availableLettersCopy.indexOf(char);
-      if (index === -1) return false;
-      availableLettersCopy.splice(index, 1);
-    }
-    
-    return true;
-  };
-  
-  // Clear current word
-  const clearCurrentWord = () => {
-    setCurrentWord("");
-    if (inputRef.current) {
-      inputRef.current.focus();
+      setCurrentWord(newWord);
+      setTimeLeft(wordTimeLimit);
     }
   };
   
-  // Timer effect
+  // Handle input change
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow letters
+    const value = e.target.value.toLowerCase().replace(/[^a-z]/g, '');
+    setUserInput(value);
+    
+    // Check if input matches current word
+    if (value === currentWord) {
+      // Correct match
+      handleCorrectWord();
+    }
+  };
+  
+  // Handle correct word
+  const handleCorrectWord = () => {
+    const difficultyScore = currentWord.length * DIFFICULTY_MULTIPLIER[difficulty];
+    const timeBonus = Math.round(timeLeft * 2);
+    const streakBonus = streak * 5;
+    const wordScore = Math.round(difficultyScore + timeBonus + streakBonus);
+    
+    // Update score
+    setScore(prevScore => prevScore + wordScore);
+    
+    // Update streak
+    const newStreak = streak + 1;
+    setStreak(newStreak);
+    
+    // Update highest streak
+    if (newStreak > highestStreak) {
+      setHighestStreak(newStreak);
+    }
+    
+    // Increase word count and get new word
+    setWordCount(prevCount => prevCount + 1);
+    setUserInput("");
+    getNewWord();
+    
+    // Make game slightly faster
+    if (wordTimeLimit > 3) {
+      setWordTimeLimit(prev => prev - TIME_DECREASE_RATE);
+    }
+    
+    // Show toast with score info
+    toast.success(
+      `+${wordScore} points! ${streak > 1 ? `${newStreak}× streak` : ''}`,
+      { duration: 1500 }
+    );
+  };
+  
+  // Handle timer
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
     if (gameActive && !gameOver) {
       timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
+        setTimeLeft(prevTime => {
+          const newTime = prevTime - 0.1;
+          
+          if (newTime <= 0) {
             clearInterval(timer);
-            endGame();
+            handleTimeout();
             return 0;
           }
-          return prev - 1;
+          
+          return Number(newTime.toFixed(1));
         });
-      }, 1000);
+      }, 100);
     }
     
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [gameActive, gameOver]);
+  }, [gameActive, gameOver, currentWord]);
   
-  // End game
-  const endGame = () => {
-    setGameActive(false);
-    setGameOver(true);
-    saveScore("word-rush", score);
+  // Handle timeout (when time runs out for a word)
+  const handleTimeout = () => {
+    // Reset streak
+    setStreak(0);
+    
+    // Shake animation
+    setShake(true);
+    setTimeout(() => setShake(false), 500);
+    
+    // Check if game over (3 strikes)
+    if (wordCount >= 3) {
+      setGameOver(true);
+      saveScore("word-rush", score);
+      toast.error("Game over! You ran out of time.");
+    } else {
+      // Continue game with new word
+      setUserInput("");
+      getNewWord();
+      toast.error("Too slow! Try the next word.");
+    }
   };
   
-  // Handle keyboard input
+  // Focus input field when game starts
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!gameActive || gameOver) return;
-      
-      if (e.key === 'Enter') {
-        handleSubmitWord();
-        return;
-      }
-      
-      if (e.key === 'Escape' || e.key === 'Delete' || e.key === 'Backspace') {
-        clearCurrentWord();
-        return;
-      }
-      
-      // Check if the key is a letter
-      const letter = e.key.toUpperCase();
-      if (/^[A-Z]$/.test(letter)) {
-        // Check if the letter is available
-        const index = availableLetters.indexOf(letter);
-        if (index !== -1) {
-          handleLetterClick(letter);
-        }
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [gameActive, gameOver, availableLetters, currentWord]);
+    if (gameActive && !gameOver && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [gameActive, gameOver]);
+  
+  // Calculate timer percentage for progress bar
+  const timerPercentage = (timeLeft / wordTimeLimit) * 100;
 
   return (
-    <div className="game-container flex flex-col items-center justify-center p-4">
-      <div className="text-center mb-4">
-        <h1 className="text-3xl font-bold mb-2">Word Rush</h1>
-        {gameActive && (
-          <div className="flex justify-center gap-8">
-            <div className="text-xl">Score: {score}</div>
-            <div className="text-xl">Time: {timeLeft}s</div>
-          </div>
-        )}
+    <div className="game-container min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
+      <div className="text-center mb-6">
+        <motion.h1 
+          className="text-4xl font-bold mb-2 text-blue-900"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Word Rush
+        </motion.h1>
+        <p className="text-gray-600 max-w-md mx-auto">
+          Type the words as quickly as you can before time runs out!
+        </p>
       </div>
 
-      {!gameActive && !gameOver ? (
-        <div className="text-center max-w-md mx-auto">
-          <p className="mb-6">
-            Form as many words as possible from a set of letters before time runs out. 
-            The longer the word, the higher your score!
+      {!gameActive ? (
+        <motion.div 
+          className="text-center max-w-md mx-auto bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <p className="mb-6 text-lg text-gray-700">
+            Test your typing skills by typing each word before the timer runs out. 
+            The game gets faster as you progress!
           </p>
-          <Button 
-            onClick={startGame}
-            className="bg-game-word hover:bg-game-word/90 text-black px-6 py-3 rounded-lg font-bold"
-          >
-            Start Game
-          </Button>
-        </div>
-      ) : gameOver ? (
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
-          <p className="text-xl mb-4">Your score: {score}</p>
-          
-          {highestScoringWord.word && (
-            <div className="mb-6">
-              <p className="font-bold">Best word: {highestScoringWord.word}</p>
-              <p>({highestScoringWord.score} points)</p>
-            </div>
-          )}
           
           <div className="mb-6">
-            <h3 className="font-bold mb-2">Words Found:</h3>
-            <div className="flex flex-wrap justify-center gap-2">
-              {foundWords.length > 0 ? (
-                foundWords.map((word, index) => (
-                  <div key={index} className="bg-gray-100 px-2 py-1 rounded">
-                    {word}
-                  </div>
-                ))
-              ) : (
-                <p>No words found</p>
-              )}
+            <h3 className="text-lg font-medium mb-3 text-blue-800">Select Difficulty:</h3>
+            <div className="flex justify-center gap-3">
+              <Button 
+                onClick={() => setDifficulty("easy")}
+                className={`px-4 py-2 rounded-lg ${difficulty === "easy" 
+                  ? "bg-green-500 text-white" 
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+              >
+                Easy
+              </Button>
+              <Button 
+                onClick={() => setDifficulty("medium")}
+                className={`px-4 py-2 rounded-lg ${difficulty === "medium" 
+                  ? "bg-yellow-500 text-white" 
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+              >
+                Medium
+              </Button>
+              <Button 
+                onClick={() => setDifficulty("hard")}
+                className={`px-4 py-2 rounded-lg ${difficulty === "hard" 
+                  ? "bg-red-500 text-white" 
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+              >
+                Hard
+              </Button>
             </div>
           </div>
           
-          <Button
-            onClick={startGame}
-            className="bg-game-word hover:bg-game-word/90 text-black px-6 py-3 rounded-lg font-bold"
-          >
-            Play Again
-          </Button>
-        </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button 
+              onClick={startGame}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg"
+            >
+              Start Game
+            </Button>
+          </motion.div>
+        </motion.div>
+      ) : gameOver ? (
+        <motion.div 
+          className="text-center bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl max-w-md mx-auto"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-3xl font-bold mb-4 text-blue-600">Game Over!</h2>
+          <div className="text-7xl mb-6">⌨️</div>
+          
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg inline-block">
+            <div className="text-2xl mb-2">Final Score: <span className="font-bold text-blue-700">{score}</span></div>
+            <div className="text-lg">Words Completed: <span className="font-bold">{wordCount}</span></div>
+            <div className="text-lg">Highest Streak: <span className="font-bold">{highestStreak}</span></div>
+            <div className="text-sm text-gray-500 mt-1">Difficulty: {difficulty}</div>
+          </div>
+          
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={startGame}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg"
+            >
+              Play Again
+            </Button>
+          </motion.div>
+        </motion.div>
       ) : (
-        <div className="flex flex-col items-center w-full max-w-md">
-          {/* Current Word */}
-          <form onSubmit={handleSubmitWord} className="w-full mb-6">
-            <div className="flex">
-              <Input
-                ref={inputRef}
-                type="text"
-                value={currentWord}
-                onChange={(e) => setCurrentWord(e.target.value.toUpperCase())}
-                placeholder="Type or click letters..."
-                className="flex-grow text-xl h-12"
-                readOnly
-              />
-              <Button 
-                type="button"
-                onClick={clearCurrentWord}
-                className="ml-2 bg-red-500 hover:bg-red-600"
-              >
-                Clear
-              </Button>
-              <Button 
-                type="submit"
-                className="ml-2 bg-game-word hover:bg-game-word/90 text-black"
-              >
-                Submit
-              </Button>
+        <motion.div 
+          className="max-w-2xl w-full bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <div className="bg-blue-100 px-3 py-1 rounded-lg">
+              <span className="text-sm font-medium text-blue-700">Words: </span>
+              <span className="font-bold">{wordCount}</span>
             </div>
-          </form>
-          
-          {/* Available Letters */}
-          <div className="grid grid-cols-4 gap-3 mb-6">
-            {availableLetters.map((letter, index) => (
-              <motion.button
-                key={index}
-                onClick={() => handleLetterClick(letter)}
-                className="w-16 h-16 bg-game-word text-black font-bold text-2xl rounded-lg shadow"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {letter}
-              </motion.button>
-            ))}
-          </div>
-          
-          {/* Found Words */}
-          <div className="w-full">
-            <h3 className="font-bold mb-2">Words Found: {foundWords.length}</h3>
-            <div className="flex flex-wrap gap-2 bg-gray-50 p-3 rounded-lg max-h-32 overflow-y-auto">
-              {foundWords.length > 0 ? (
-                foundWords.map((word, index) => (
-                  <div key={index} className="bg-gray-100 px-2 py-1 rounded text-sm">
-                    {word}
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No words found yet</p>
-              )}
+            
+            <div className="bg-blue-100 px-3 py-1 rounded-lg">
+              <span className="text-sm font-medium text-blue-700">Score: </span>
+              <span className="font-bold">{score}</span>
+            </div>
+            
+            <div className="bg-blue-100 px-3 py-1 rounded-lg">
+              <span className="text-sm font-medium text-blue-700">Streak: </span>
+              <span className="font-bold">{streak}×</span>
             </div>
           </div>
-        </div>
+          
+          {/* Timer */}
+          <div className="mb-4 w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <motion.div 
+              className={`h-full rounded-full ${
+                timerPercentage > 65 
+                  ? 'bg-green-500' 
+                  : timerPercentage > 30 
+                    ? 'bg-yellow-500' 
+                    : 'bg-red-500'
+              }`}
+              initial={{ width: `${timerPercentage}%` }}
+              animate={{ width: `${timerPercentage}%` }}
+              transition={{ type: "tween" }}
+            />
+          </div>
+          
+          {/* Current word display */}
+          <motion.div 
+            className={`text-center text-4xl font-bold mb-6 text-blue-800 p-4 rounded-lg ${
+              shake ? 'bg-red-100' : 'bg-blue-50'
+            }`}
+            animate={shake ? { x: [0, -10, 10, -10, 10, 0] } : {}}
+            transition={{ duration: 0.5 }}
+          >
+            {currentWord}
+          </motion.div>
+          
+          {/* Input area */}
+          <div className="mb-6">
+            <input
+              ref={inputRef}
+              type="text"
+              value={userInput}
+              onChange={handleInputChange}
+              autoFocus
+              className="w-full text-xl p-4 rounded-lg border-2 border-blue-300 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              placeholder="Type the word here..."
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck="false"
+            />
+            
+            {/* Character matching visualization */}
+            <div className="mt-2 flex justify-center items-center h-6">
+              {currentWord.split('').map((char, index) => {
+                const userChar = userInput[index];
+                const isMatch = userChar === char;
+                const isTyped = index < userInput.length;
+                
+                return (
+                  <motion.span 
+                    key={index}
+                    className={`inline-block w-6 mx-0.5 text-center ${
+                      isTyped 
+                        ? isMatch 
+                          ? 'text-green-600' 
+                          : 'text-red-600' 
+                        : 'text-gray-400'
+                    }`}
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    {isTyped ? (isMatch ? '✓' : '✗') : '·'}
+                  </motion.span>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Current stats */}
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="bg-blue-50 p-2 rounded-lg">
+              <div className="text-sm text-blue-600">Time per word</div>
+              <div className="font-bold">{wordTimeLimit.toFixed(1)}s</div>
+            </div>
+            <div className="bg-blue-50 p-2 rounded-lg">
+              <div className="text-sm text-blue-600">Difficulty</div>
+              <div className="font-bold capitalize">{difficulty}</div>
+            </div>
+            <div className="bg-blue-50 p-2 rounded-lg">
+              <div className="text-sm text-blue-600">Best Streak</div>
+              <div className="font-bold">{highestStreak}</div>
+            </div>
+          </div>
+        </motion.div>
       )}
 
       <GameControls onRestart={startGame} />

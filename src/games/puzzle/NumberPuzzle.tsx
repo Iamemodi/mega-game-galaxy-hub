@@ -236,103 +236,170 @@ export function NumberPuzzle() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Get color for tile based on value
+  const getTileColor = (value: number) => {
+    // Create a color gradient based on the value
+    const colors = [
+      "bg-purple-300", "bg-purple-400", "bg-purple-500",
+      "bg-indigo-300", "bg-indigo-400", "bg-indigo-500",
+      "bg-blue-300", "bg-blue-400", "bg-blue-500", 
+      "bg-green-300", "bg-green-400", "bg-green-500",
+      "bg-yellow-300", "bg-yellow-400", "bg-yellow-500",
+      "bg-orange-300", "bg-orange-400", "bg-orange-500",
+      "bg-red-300", "bg-red-400", "bg-red-500",
+      "bg-pink-300", "bg-pink-400", "bg-pink-500"
+    ];
+    
+    // Distribute colors evenly across the possible values
+    const maxValue = puzzleSize * puzzleSize - 1;
+    const colorIndex = Math.floor((value - 1) / maxValue * colors.length);
+    return colors[Math.min(colorIndex, colors.length - 1)];
+  };
+
   return (
-    <div className="game-container flex flex-col items-center justify-center p-4">
+    <div className="game-container flex flex-col items-center justify-center p-4 bg-gradient-to-br from-purple-50 to-indigo-100 min-h-[80vh] rounded-xl">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Number Puzzle</h1>
+        <h1 className="text-4xl font-bold mb-2 text-indigo-900">Number Puzzle</h1>
         {gameActive && (
           <div className="flex justify-center gap-8">
-            <div className="text-xl">Moves: {moves}</div>
-            <div className="text-xl">Time: {formatTime(time)}</div>
-            {gameOver && <div className="text-xl">Score: {score}</div>}
+            <div className="text-xl bg-white/50 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm">
+              <span className="font-semibold text-indigo-700">Moves:</span> {moves}
+            </div>
+            <div className="text-xl bg-white/50 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm">
+              <span className="font-semibold text-indigo-700">Time:</span> {formatTime(time)}
+            </div>
+            {gameOver && (
+              <div className="text-xl bg-white/50 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm">
+                <span className="font-semibold text-indigo-700">Score:</span> {score}
+              </div>
+            )}
           </div>
         )}
       </div>
 
       {!gameActive ? (
-        <div className="text-center max-w-md mx-auto">
-          <p className="mb-6">
-            Arrange numbers in ascending order. Slide tiles to solve the puzzle as quickly as possible.
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-md mx-auto bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl"
+        >
+          <p className="mb-6 text-lg text-gray-700">
+            Arrange numbers in ascending order. Slide tiles into the empty space to solve the puzzle as quickly as possible.
           </p>
           <div className="mb-6">
-            <label className="block mb-2">Select puzzle size:</label>
+            <label className="block mb-3 text-lg font-medium text-indigo-800">Select puzzle size:</label>
             <div className="flex justify-center gap-4">
               <Button 
                 onClick={() => setPuzzleSize(3)}
-                className={`${puzzleSize === 3 ? 'bg-game-puzzle/90' : 'bg-gray-300'} text-black px-4 py-2 rounded-lg font-bold`}
+                className={`${puzzleSize === 3 ? 'bg-indigo-600 shadow-lg' : 'bg-gray-300'} hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition-all`}
               >
-                3x3
+                3×3
               </Button>
               <Button 
                 onClick={() => setPuzzleSize(4)}
-                className={`${puzzleSize === 4 ? 'bg-game-puzzle/90' : 'bg-gray-300'} text-black px-4 py-2 rounded-lg font-bold`}
+                className={`${puzzleSize === 4 ? 'bg-indigo-600 shadow-lg' : 'bg-gray-300'} hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition-all`}
               >
-                4x4
+                4×4
               </Button>
               <Button 
                 onClick={() => setPuzzleSize(5)}
-                className={`${puzzleSize === 5 ? 'bg-game-puzzle/90' : 'bg-gray-300'} text-black px-4 py-2 rounded-lg font-bold`}
+                className={`${puzzleSize === 5 ? 'bg-indigo-600 shadow-lg' : 'bg-gray-300'} hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition-all`}
               >
-                5x5
+                5×5
               </Button>
             </div>
           </div>
-          <Button 
-            onClick={startGame}
-            className="bg-game-puzzle hover:bg-game-puzzle/90 text-black px-6 py-3 rounded-lg font-bold"
-          >
-            Start Game
-          </Button>
-        </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button 
+              onClick={startGame}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg"
+            >
+              Start Game
+            </Button>
+          </motion.div>
+        </motion.div>
       ) : gameOver ? (
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Puzzle Solved!</h2>
-          <p className="text-xl mb-6">Your score: {score}</p>
-          <Button
-            onClick={startGame}
-            className="bg-game-puzzle hover:bg-game-puzzle/90 text-black px-6 py-3 rounded-lg font-bold"
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl"
+        >
+          <motion.div 
+            initial={{ scale: 0.5, rotateZ: -10 }}
+            animate={{ scale: 1, rotateZ: 0 }}
+            transition={{ type: "spring", duration: 0.8 }}
           >
-            Play Again
-          </Button>
-        </div>
+            <h2 className="text-3xl font-bold mb-4 text-green-600">Puzzle Solved!</h2>
+            <div className="text-7xl mb-6">🎉</div>
+          </motion.div>
+          <p className="text-xl mb-6">Your score: <span className="font-bold text-indigo-600">{score}</span></p>
+          <div className="flex flex-col gap-2 text-left mb-6">
+            <p><span className="font-medium">Moves:</span> {moves}</p>
+            <p><span className="font-medium">Time:</span> {formatTime(time)}</p>
+          </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={startGame}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg"
+            >
+              Play Again
+            </Button>
+          </motion.div>
+        </motion.div>
       ) : (
-        <div className="flex flex-col items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center justify-center"
+        >
           {/* Puzzle Board */}
           <div 
-            className="bg-gray-100 p-2 rounded-lg shadow-lg mb-6"
+            className="bg-white/30 backdrop-blur-sm p-3 rounded-xl shadow-lg mb-6 border border-white/50"
             style={{
               display: 'grid',
               gridTemplateColumns: `repeat(${puzzleSize}, 1fr)`,
               gap: '8px',
-              width: `${puzzleSize * 70}px`,
-              height: `${puzzleSize * 70}px`,
+              width: `min(${puzzleSize * 70}px, 90vw)`,
+              height: `min(${puzzleSize * 70}px, 90vw)`,
               maxWidth: '100%',
               aspectRatio: '1/1',
             }}
           >
-            {tiles.map(tile => (
-              <motion.button
-                key={tile.value}
-                onClick={() => handleTileClick(tile)}
-                className="bg-game-puzzle text-black font-bold text-xl rounded-lg shadow-md hover:brightness-105"
-                style={{ 
-                  width: '100%',
-                  height: '100%',
-                }}
-                initial={false}
-                animate={{
-                  left: `${tile.position.col * (100/puzzleSize)}%`,
-                  top: `${tile.position.row * (100/puzzleSize)}%`,
-                }}
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                whileHover={{ scale: 0.98 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {tile.value}
-              </motion.button>
-            ))}
+            {tiles.map(tile => {
+              // Calculate the position for the tile
+              const x = tile.position.col / puzzleSize * 100;
+              const y = tile.position.row / puzzleSize * 100;
+              
+              return (
+                <motion.button
+                  key={tile.value}
+                  onClick={() => handleTileClick(tile)}
+                  className={`${getTileColor(tile.value)} text-white font-bold text-xl sm:text-2xl md:text-3xl rounded-lg shadow-md hover:brightness-105 flex items-center justify-center`}
+                  style={{ 
+                    position: 'absolute',
+                    width: `calc(100% / ${puzzleSize} - 8px)`,
+                    height: `calc(100% / ${puzzleSize} - 8px)`,
+                    x: `calc(${x}% + 4px)`,
+                    y: `calc(${y}% + 4px)`,
+                  }}
+                  initial={false}
+                  animate={{
+                    x: `calc(${x}% + 4px)`,
+                    y: `calc(${y}% + 4px)`,
+                  }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  whileHover={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {tile.value}
+                </motion.button>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
       )}
 
       <GameControls onRestart={startGame} />
