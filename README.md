@@ -71,3 +71,55 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Desktop Application (Tauri)
+
+### Prerequisites
+
+- Node.js and npm (or yarn/pnpm)
+- Rust and Cargo
+- System dependencies required by Tauri (see [Tauri Prerequisite Guide](https://tauri.app/v1/guides/getting-started/prerequisites))
+
+### Development
+
+1. **Clone the repository:**
+   ```sh
+   git clone <YOUR_GIT_URL>
+   cd <YOUR_PROJECT_NAME>
+   ```
+2. **Install frontend dependencies:**
+   ```sh
+   npm install
+   # or
+   # yarn install
+   # or
+   # pnpm install
+   ```
+3. **Run the Tauri development environment:**
+   ```sh
+   npm run tauri:dev
+   # or
+   # yarn tauri:dev
+   # or
+   # pnpm tauri:dev
+   ```
+
+### Building
+
+1. **Install frontend dependencies:**
+   ```sh
+   npm install
+   # or
+   # yarn install
+   # or
+   # pnpm install
+   ```
+2. **Build the Tauri application:**
+   ```sh
+   npm run tauri:build
+   # or
+   # yarn tauri:build
+   # or
+   # pnpm tauri:build
+   ```
+   The executable will be found in `src-tauri/target/release/` or `src-tauri/target/release/bundle/`.
