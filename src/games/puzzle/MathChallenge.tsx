@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { GameControls } from "@/components/GameControls";
 import { saveScore } from "@/utils/gameUtils";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export function MathChallenge() {
   const [gameActive, setGameActive] = useState(false);
@@ -53,12 +53,7 @@ export function MathChallenge() {
           </Button>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-[500px] w-full max-w-md border-2 border-dashed border-gray-300 rounded-lg">
-          <p className="text-muted-foreground text-center p-4">
-            Math Challenge game goes here!<br />
-            Coming soon...
-          </p>
-        </div>
+        <ComingSoon game="Math Challenge" />
       )}
 
       <GameControls onRestart={startGame} />

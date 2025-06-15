@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { GameControls } from "@/components/GameControls";
 import { saveScore } from "@/utils/gameUtils";
 import { motion } from "framer-motion";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export function PinballGame() {
   const [gameActive, setGameActive] = useState(false);
@@ -60,22 +60,7 @@ export function PinballGame() {
             </Button>
           </div>
         ) : (
-          <motion.div 
-            className="flex flex-col items-center justify-center h-[500px] w-full max-w-md border-4 border-dashed bg-gradient-to-t from-slate-100/80 to-game-arcade/30 rounded-3xl shadow-inner"
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", delay: 0.1 }}
-          >
-            <motion.p
-              className="text-muted-foreground text-xl text-center p-4 font-inter"
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-            >
-              Pinball game goes here!<br />
-              <span className="text-primary animate-pulse">Coming soon...</span>
-            </motion.p>
-          </motion.div>
+          <ComingSoon game="Pinball" />
         )}
 
         <motion.div
