@@ -41,7 +41,7 @@
 
 @layer base {
   body {
-    @apply bg-gradient-to-br from-[#e9d2fa] to-[#c1eaff] font-inter min-h-screen transition-all duration-500;
+    @apply bg-shiny-purple font-inter min-h-screen transition-all duration-500;
     font-feature-settings: "rlig" 1, "calt" 1;
     overscroll-behavior: none;
   }
@@ -64,7 +64,7 @@
   }
 
   .game-container {
-    @apply flex min-h-screen flex-col items-center justify-center p-0 bg-gradient-to-br from-shiny-purple to-game-puzzle/60;
+    @apply flex min-h-screen flex-col items-center justify-center p-0 bg-shiny-purple;
     background-blend-mode: screen;
     transition: background 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
   }
@@ -83,3 +83,4 @@
     @apply transition-all bg-gradient-to-tr from-game-primary to-game-accent shadow-md hover:scale-105 hover:from-game-accent hover:to-game-primary text-white px-6 py-3 rounded-full font-bold border-0;
   }
 }
+
