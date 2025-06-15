@@ -29,29 +29,29 @@ export function HeaderEnhanced() {
     <header 
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled 
-          ? "py-2 bg-white/90 dark:bg-background/90 backdrop-blur-md shadow-md" 
-          : "py-4 bg-transparent"
+          ? "py-2 bg-gradient-to-r from-purple-100/80 via-game-primary/60 to-sky-200/80 backdrop-blur-md shadow-lg"
+          : "py-5 bg-gradient-to-r from-transparent via-game-primary/10 to-transparent"
       }`}
     >
       <div className="container px-4 mx-auto flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-3 group">
           <motion.div 
-            whileHover={{ rotate: 15 }}
-            className="p-1.5 bg-gradient-to-br from-game-primary to-purple-700 rounded-lg shadow-lg"
+            whileHover={{ rotate: 28, scale: 1.15 }}
+            className="p-1.5 bg-gradient-to-br from-game-primary to-purple-700 rounded-lg shadow-xl border-2 border-white transition-all duration-300"
           >
-            <Gamepad2 size={24} className="text-white" />
+            <Gamepad2 size={28} className="text-white drop-shadow-md" />
           </motion.div>
-          <div className="flex flex-col">
+          <div className="flex flex-col text-left">
             <motion.span 
-              className="font-bold text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-game-primary to-purple-700"
+              className="font-playfair text-2xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-game-primary via-pink-500 to-indigo-800 transition-all duration-300"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
               100 in 1
             </motion.span>
-            <span className="text-xs text-muted-foreground -mt-1">Game Collection</span>
+            <span className="text-xs text-muted-foreground -mt-1 font-inter">Game Collection</span>
           </div>
         </Link>
 
